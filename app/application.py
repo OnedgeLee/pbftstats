@@ -99,6 +99,24 @@ def get_latest_ill_cases(n):
     return df_problem.to_dict("records"), [{"name": i, "id": i} for i in df_problem.columns]
 
 @app.callback(
+    Output("dl-report-lastcommit-vote-csv", "data"),
+    Input("btn_report_lastcommit_vote_csv", "n_clicks"),
+    prevent_initial_call=True,
+)
+def func(n_clicks):
+    df = pd.read_csv(os.path.join(report_path, "report_lastcommit_vote.csv"))
+    return dcc.send_data_frame(df.to_csv, "report_lastcommit_vote.csv")
+
+@app.callback(
+    Output("dl-report-tx-signer-csv", "data"),
+    Input("btn_report_tx_signer_csv", "n_clicks"),
+    prevent_initial_call=True,
+)
+def func(n_clicks):
+    df = pd.read_csv(os.path.join(report_path, "report_tx_signer.csv"))
+    return dcc.send_data_frame(df.to_csv, "report_tx_signer.csv")
+
+@app.callback(
     Output("status", "style"),
     Output("report", "style"),
     Input("btn_status", "n_clicks"),
@@ -213,6 +231,12 @@ app.layout = html.Div([
                     "textAlign": "center",
                 }
             ),
+            html.Div(
+                [
+                    html.Button("Download CSV", id="btn_report_lastcommit_vote_csv"),
+                    dcc.Download(id="dl-report-lastcommit-vote-csv"),
+                ]
+            ),
             dash_table.DataTable(
                 id="report_lastcommit_vote",
                 data=[],
@@ -237,6 +261,12 @@ app.layout = html.Div([
                 style={
                     "textAlign": "center",
                 }
+            ),
+            html.Div(
+                [
+                    html.Button("Download CSV", id="btn_report_tx_signer_csv"),
+                    dcc.Download(id="dl-report-tx-signer-csv"),
+                ]
             ),
             dash_table.DataTable(
                 id="report_tx_signer",
